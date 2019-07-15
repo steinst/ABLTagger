@@ -37,6 +37,19 @@ The script `interactive.py` loads a model and then allow the user to try out the
 
 ![interactive](https://user-images.githubusercontent.com/24220374/50121119-a8d95c80-024f-11e9-902f-44364692cea7.png)
 
+###Trained models are available:
+####Full
+A model trained on all training data used in the paper cited above, taking advantage of the whole DMII morphological lexicon. This model needs at least 16GB RAM to load.
+Download link: https://www.dropbox.com/s/8oya0nse3o4xxoy/models_Full.zip?dl=0 (360 MB download - 6.7 GB uncompressed)
+The model should go into a folder called ./models/Full
+
+####Light
+A model trained on all training data used in the paper cited above, but only taking advantage of a subset of the DMII morphological lexicon. This model needs less than 8GB RAM to load.
+https://www.dropbox.com/s/hdp0kjkb46n5i1r/models_Light.zip?dl=0 (275 MB download - 770 MB uncompressed)
+The model should go into a folder called ./models/Light
+
+Both models need the contents of https://www.dropbox.com/s/ysmn9or0n0zytwi/extra.zip?dl=0 in the ./extra folder.
+
 
 ## Input formats
 
