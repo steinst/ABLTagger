@@ -144,7 +144,7 @@ class Embeddings:
                 self.embeddings[i] = eval(fields[1])
                 if key_number > 100:
                     if i % int(key_number/100) == 0:
-                        print(str(int((i*100)/key_number)) + '%', end='\r')
+                        print(str(int((i*100)/key_number)) + '%   ', end='\r')
             print('100%', end='\r')
 
 

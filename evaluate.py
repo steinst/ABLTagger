@@ -226,7 +226,7 @@ def train_and_evaluate_tagger(tagger, training_data, test_data, total_epochs, ev
             else:
                 evaluation = evaluate_tagging(tagger, test_data, False, coarse_flag)
                 update_progress_notice(i, ITER + 1, start_time, epoch_start_time, cum_loss / num_tagged, total_epochs, evaluation)
-                write_results_to_file(ITER + 1, evaluation, cum_loss / num_tagged, tagger.trainer.learning_rate, True, total_epochs)
+                write_results_to_file(ITER + 1, evaluation, cum_loss / num_tagged, tagger.trainer.learning_rate, False, total_epochs)
 
         # decay
         if args.learning_rate_decay:
@@ -319,7 +319,7 @@ if __name__ == '__main__':
         with open('./data/WORDS_' + format(args.dataset_fold, '02') + training_file_ending_coarse, "w") as word_freq_file:
             for i in words:
                 word_freq_file.write(i.strip() + '\t' + str(word_frequency[i]) + '\n')
-        with open('./data/TAGS_COURSE_' + args.coarse_type + '_' + format(args.dataset_fold, '02') + training_file_ending_coarse, "w") as tag_file_coarse:
+        with open('./data/TAGS_COARSE_' + args.coarse_type + '_' + format(args.dataset_fold, '02') + training_file_ending_coarse, "w") as tag_file_coarse:
             for i in tags_coarse:
                 tag_file_coarse.write(i.strip() + '\t')
         VocabWords, WordFrequency = Utils.build_word_dict(list(Utils.read('./data/WORDS_' + format(args.dataset_fold, '02') + training_file_ending_coarse)))
