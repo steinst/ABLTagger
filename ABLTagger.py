@@ -160,7 +160,7 @@ class CombinedDims:
         self.word_output = 64
         self.word_lookup = 128
         self.char_lookup = 20
-        self.morphlex_lookup = 61
+        self.morphlex_lookup = 65
         self.word_class_lookup = 10
 
 

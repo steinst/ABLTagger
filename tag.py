@@ -25,7 +25,7 @@ __license__ = "Apache 2.0"
 import argparse
 import os, sys, shutil
 from colored import fg, attr
-import nltk
+from tokenizer import split_into_sentences
 
 
 def read_arguments_from_file(filename):
@@ -53,11 +53,18 @@ def tag_simple(input, output, tagger):
 
     with open(output_file, "w") as f:
         for i in input_text:
-            simple_tokens = nltk.word_tokenize(i)
-            if simple_tokens[0][0].isupper() and not simple_tokens[0] in tagger.vw.w2i:
-                simple_tokens[0] = simple_tokens[0][0] + simple_tokens[0][1:]
-            f.write("\n".join([x[0] + "\t" + x[1] for x in tagger.tag_sent(simple_tokens)]) + '\n')
-            f.write("\n")
+            if i.strip() != '':
+                if args.tokenize:
+                    simple_tokens = []
+                    g = split_into_sentences(i.strip())
+                    for sentence in g:
+                        simple_tokens.append(sentence)
+                else:
+                    simple_tokens = i.strip().split()
+                if simple_tokens[0][0].isupper() and not simple_tokens[0] in tagger.vw.w2i:
+                    simple_tokens[0] = simple_tokens[0][0] + simple_tokens[0][1:]
+                f.write("\n".join([x[0] + "\t" + x[1] for x in tagger.tag_sent(simple_tokens)]) + '\n')
+                f.write("\n")
 
 
 def tag_augmented(input, output, tagger):
@@ -88,6 +95,7 @@ if __name__ == '__main__':
     parser.add_argument('--model', '-m', help="Select model name. Saved in ./models/[model-name]/", default="Full")
     parser.add_argument('--output', '-o', help='Select suffix for output files.', default=".tagged")
     parser.add_argument('--tag_type', '-type', help='Select tagging type', choices=['coarse', 'fine', 'combined'], default="combined")
+    parser.add_argument('--tokenize', action='store_true')
     requiredNamed = parser.add_argument_group('required named arguments')
     requiredNamed.add_argument('--input', '-i', nargs='+', required=True, default=argparse.SUPPRESS,
                                help="File(s) to tag. Files should include tokenized sentences. One sentence per line. Each token followed by whitespace. (Example: Þetta er tókað .) [Required]")

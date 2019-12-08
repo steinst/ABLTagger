@@ -23,9 +23,14 @@
 """
 __license__ = "Apache 2.0"
 
-import tokenizer
+from tokenizer import split_into_sentences
 import argparse
 import sys
+
+# This script tokenizes an input file. Using the tokenizer module from Mideind, this script does the same
+# as invoking the tokenizer directly from the command line:
+#       $ tokenize input.txt output.txt
+#
 
 if __name__ == '__main__':
     # reading input parameters
@@ -45,15 +50,11 @@ if __name__ == '__main__':
 
     filename = args.input
 
-    for i in args.input:
-        token_list = []
-        for line in open(i):
-            token_list.append(list(tokenizer.tokenize(line.strip())))
-
-        with open(i + args.output, "w") as f:
-            for l in token_list:
-                outline = ''
-                for token in l:
-                    if token.txt is not None: outline += token.txt + ' '
-                if len(outline.strip()) > 0:
-                    f.write(outline.strip() + '\n')
+    for current_file in args.input:
+        with open(current_file + args.output, "w") as f:
+            line_list = []
+            for line in open(current_file):
+                if len(line.strip()) > 0:
+                    g = split_into_sentences(line.strip())
+                    for sentence in g:
+                        f.write(sentence + '\n')
