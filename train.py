@@ -169,7 +169,7 @@ if __name__ == '__main__':
         with open(model_folder + 'tags_fine.txt', "w") as tag_file_fine:
             for i in tags_fine:
                 tag_file_fine.write(i.strip() + '\t')
-        shutil.copy2('./extra/' + args.use_morphlex, model_folder + 'morphlex.txt')
+        shutil.copy2(args.use_morphlex, model_folder + 'morphlex.txt')
         VocabWords, WordFrequency = Utils.build_word_dict(list(Utils.read(model_folder + 'words.txt')))
         print("Known tokens loaded")
         VocabTagsCoarse = Utils.build_vocab_tags(model_folder + 'tags_coarse.txt')
@@ -198,7 +198,7 @@ if __name__ == '__main__':
         with open(model_folder + 'tags_' + suffix + '.txt', "w") as tag_file:
             for i in tags:
                 tag_file.write(i.strip() + '\t')
-        shutil.copy2('./extra/' + args.use_morphlex, model_folder + 'morphlex.txt')
+        shutil.copy2(args.use_morphlex, model_folder + 'morphlex.txt')
 
         VocabWords, WordFrequency = Utils.build_word_dict(list(Utils.read(model_folder + 'words.txt')))
         print("Known tokens loaded")
