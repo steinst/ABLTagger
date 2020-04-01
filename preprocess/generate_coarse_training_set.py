@@ -6,7 +6,7 @@ def coarsify(inputline):
         temp = inputline.strip().split()
         return temp[0] + '\t' + temp[1][0] + '\n'
     except:
-        return ''
+        return '\n'
 
 if __name__ == '__main__':
     # reading input parameters
