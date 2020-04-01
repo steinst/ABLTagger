@@ -369,3 +369,4 @@ if __name__ == '__main__':
     wordforms = dim_file.readlines()
     vectorise_all(wordforms, args.output)
 
+#TODO: add spinner

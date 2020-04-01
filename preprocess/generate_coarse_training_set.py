@@ -24,4 +24,6 @@ if __name__ == '__main__':
             line = training.readline()
             while line:
                 f.write(coarsify(line))
+                line = training.readline()
 
+#TODO: add spinner and something to indicate time left
