@@ -107,10 +107,10 @@ if __name__ == '__main__':
     parser.add_argument('--dropout', '-d', help="Dropout rate", type=float, default=0.05)
     parser.add_argument('--noise', '-n', help="Noise in embeddings", type=float, default=0.1)
     # EXTERNAL DATA
-    parser.add_argument('--use_morphlex', '-morphlex', help="File with morphological lexicon embeddings in ./extra folder. Example file: ./extra/dmii.or")
+    parser.add_argument('--use_morphlex', '-morphlex', help="File with morphological lexicon embeddings in ./extra folder. Example file: ./extra/dmii.or", default='./extra/dmii.vectors')
     parser.add_argument('--load_characters', '-load_chars', help="File to load characters from", default='./extra/characters_training.txt')
     parser.add_argument('--load_coarse_tagset', '-load_coarse', help="Load embeddings file for coarse grained tagset", default='./extra/word_class_vectors.txt')
-    parser.add_argument('--training_type','-type', help='Select training type: coarse, fine or combined.', choices=['coarse', 'fine', 'combined'], default="combined")
+    parser.add_argument('--training_type', '-type', help='Select training type: coarse, fine or combined.', choices=['coarse', 'fine', 'combined'], default="combined")
     # TRAIN MODEL
     parser.add_argument('--epochs_coarse_grained', '-ecg', help="How many epochs for coarse grained training? (12 is default)", type=int, default=12)
     parser.add_argument('--epochs_fine_grained', '-efg', help="How many epochs for fine grained training? (20 is default)", type=int, default=20)
@@ -136,7 +136,7 @@ if __name__ == '__main__':
 
     if args.use_morphlex is not None:
         print("Building morphological lexicon embeddings...")
-        morphlex_embeddings = Embeddings('./extra/' + args.use_morphlex)
+        morphlex_embeddings = Embeddings(args.use_morphlex)
         print("Morphological lexicon embeddings in place")
     else:
         morphlex_embeddings = None
@@ -153,8 +153,11 @@ if __name__ == '__main__':
     if args.training_type == 'combined':
         training_file_coarse = './data/' + args.model + '.coarse'
         training_file_fine = './data/' + args.model + '.fine'
+        print('Reading coarse-grained training file...')
         train_coarse = list(Utils.read(training_file_coarse))
+        print('Reading fine-grained training file...')
         train_fine = list(Utils.read(training_file_fine))
+        print('Creating vocabularies...')
         words, word_frequency, tags_coarse = Utils.create_vocabularies(training_file_coarse)
         words, word_frequency, tags_fine = Utils.create_vocabularies(training_file_fine)
         with open(model_folder + 'words.txt', "w") as word_freq_file:

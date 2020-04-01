@@ -30,7 +30,7 @@ from collections import defaultdict, Counter
 from itertools import count
 
 import dynet_config
-dynet_config.set(mem=1024, random_seed=42)
+dynet_config.set(mem=4096, random_seed=42)
 random.seed(42)
 import dynet as dy
 import gc
