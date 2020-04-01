@@ -68,6 +68,213 @@ tag_matrix = {"no":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
               "spurnar": [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
               "sérst": [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]}
 
+def build_tagarray(current):
+    temp = ''
+    #cases
+    if current.startswith('NF'):
+        temp = numpy.array(tag_matrix['nf'])
+        current = current[2:]
+    elif current.startswith('ÞGF'):
+        temp = numpy.array(tag_matrix['þgf'])
+        current = current[3:]
+    elif current.startswith('ÞF'):
+        temp = numpy.array(tag_matrix['þf'])
+        current = current[2:]
+    elif current.startswith('EF'):
+        temp = numpy.array(tag_matrix['ef'])
+        current = current[2:]
+    elif current.startswith('-NF'):
+        temp = numpy.array(tag_matrix['nf'])
+        current = current[3:]
+    elif current.startswith('-ÞF'):
+        temp = numpy.array(tag_matrix['þf'])
+        current = current[3:]
+    elif current.startswith('-ÞGF'):
+        temp = numpy.array(tag_matrix['þgf'])
+        current = current[4:]
+    elif current.startswith('-EF'):
+        temp = numpy.array(tag_matrix['ef'])
+        current = current[3:]
+    elif current.startswith('_NF'):
+        temp = numpy.array(tag_matrix['nf'])
+        current = current[3:]
+    elif current.startswith('_ÞF'):
+        temp = numpy.array(tag_matrix['þf'])
+        current = current[3:]
+    elif current.startswith('_ÞGF'):
+        temp = numpy.array(tag_matrix['þgf'])
+        current = current[4:]
+    elif current.startswith('_EF'):
+        temp = numpy.array(tag_matrix['ef'])
+        current = current[3:]
+
+    #aðeins óákveðin fornöfn eru sérstæð
+    elif current.startswith('-SERST'):
+        temp = numpy.array(tag_matrix['sérst'])
+        current = current[6:]
+
+    #number
+    elif current.startswith('ET'):
+        temp = numpy.array(tag_matrix['et'])
+        current = current[2:]
+    elif current.startswith('FT'):
+        temp = numpy.array(tag_matrix['ft'])
+        current = current[2:]
+    elif current.startswith('-ET'):
+        temp = numpy.array(tag_matrix['et'])
+        current = current[3:]
+    elif current.startswith('-FT'):
+        temp = numpy.array(tag_matrix['ft'])
+        current = current[3:]
+
+    #person
+    elif current.startswith('1P'):
+        temp = numpy.array(tag_matrix['1p'])
+        current = current[2:]
+    elif current.startswith('2P'):
+        temp = numpy.array(tag_matrix['2p'])
+        current = current[2:]
+    elif current.startswith('3P'):
+        temp = numpy.array(tag_matrix['3p'])
+        current = current[2:]
+    elif current.startswith('-1P'):
+        temp = numpy.array(tag_matrix['1p'])
+        current = current[3:]
+    elif current.startswith('-2P'):
+        temp = numpy.array(tag_matrix['2p'])
+        current = current[3:]
+    elif current.startswith('-3P'):
+        temp = numpy.array(tag_matrix['3p'])
+        current = current[3:]
+
+    #article
+    elif current.startswith('gr'):
+        temp = numpy.array(tag_matrix['vsk_gr'])
+        current = current[2:]
+
+    elif current.startswith('LHÞT'):
+        temp = numpy.array(tag_matrix['lhþ'])
+        current = current[4:]
+    elif current.startswith('-VB'):
+        temp = numpy.array(tag_matrix['vb'])
+        current = current[3:]
+    elif current.startswith('-SB'):
+        temp = numpy.array(tag_matrix['sb'])
+        current = current[3:]
+    elif current.startswith('OP'):
+        temp = numpy.array(tag_matrix['óp'])
+        current = current[2:]
+    elif current.startswith('-það'):
+        temp = numpy.array(tag_matrix['óp'])
+        current = current[4:]
+    elif current.startswith('LHNT'):
+        temp = numpy.array(tag_matrix['lhn'])
+        current = current[4:]
+    elif current.startswith('LH-NT'):
+        temp = numpy.array(tag_matrix['lhn'])
+        current = current[5:]
+    elif current.startswith('SP'):
+        temp = numpy.array(tag_matrix['spurnar'])
+        current = current[2:]
+
+    #gender
+    elif current.startswith('-KK'):
+        temp = numpy.array(tag_matrix['kk'])
+        current = current[3:]
+    elif current.startswith('-KVK'):
+        temp = numpy.array(tag_matrix['kvk'])
+        current = current[4:]
+    elif current.startswith('-HK'):
+        temp = numpy.array(tag_matrix['hk'])
+        current = current[3:]
+    elif current.startswith('KK'):
+        temp = numpy.array(tag_matrix['kk'])
+        current = current[2:]
+    elif current.startswith('KVK'):
+        temp = numpy.array(tag_matrix['kvk'])
+        current = current[3:]
+    elif current.startswith('HK'):
+        temp = numpy.array(tag_matrix['hk'])
+        current = current[2:]
+
+    #voice
+    elif current.startswith('MM'):
+        temp = numpy.array(tag_matrix['mm'])
+        current = current[2:]
+    elif current.startswith('-MM'):
+        temp = numpy.array(tag_matrix['mm'])
+        current = current[3:]
+    elif current.startswith('GM'):
+        temp = numpy.array(tag_matrix['gm'])
+        current = current[2:]
+    elif current.startswith('-GM'):
+        temp = numpy.array(tag_matrix['gm'])
+        current = current[3:]
+
+    #mood
+    elif current.startswith('-NH'):
+        temp = numpy.array(tag_matrix['nh'])
+        current = current[3:]
+    elif current.startswith('-FH'):
+        temp = numpy.array(tag_matrix['fh'])
+        current = current[3:]
+    elif current.startswith('-VH'):
+        temp = numpy.array(tag_matrix['vh'])
+        current = current[3:]
+    elif current.startswith('-BH'):
+        temp = numpy.array(tag_matrix['bh'])
+        current = current[3:]
+    elif current.startswith('-SAGNB'):
+        temp = numpy.array(tag_matrix['sagnb'])
+        current = current[6:]
+    elif current.startswith('-ST'):
+        temp = numpy.array(tag_matrix['stýfður'])
+        current = current[3:]
+
+    #tense
+    elif current.startswith('-NT'):
+        temp = numpy.array(tag_matrix['nt'])
+        current = current[3:]
+    elif current.startswith('-ÞT'):
+        temp = numpy.array(tag_matrix['þt'])
+        current = current[3:]
+
+    elif current.startswith('FSB'):
+        temp = numpy.array(tag_matrix['fst'])
+        temp += numpy.array(tag_matrix['sb'])
+        current = current[3:]
+    elif current.startswith('FVB'):
+        temp = numpy.array(tag_matrix['fst'])
+        temp += numpy.array(tag_matrix['vb'])
+        current = current[3:]
+    elif current.startswith('ESB'):
+        temp = numpy.array(tag_matrix['est'])
+        temp += numpy.array(tag_matrix['sb'])
+        current = current[3:]
+    elif current.startswith('EVB'):
+        temp = numpy.array(tag_matrix['est'])
+        temp += numpy.array(tag_matrix['vb'])
+        current = current[3:]
+    elif current.startswith('FST'):
+        temp = numpy.array(tag_matrix['fst'])
+        current = current[3:]
+    elif current.startswith('MSTSB'):
+        temp = numpy.array(tag_matrix['mst'])
+        temp += numpy.array(tag_matrix['sb'])
+        current = current[5:]
+    elif current.startswith('MST2'):
+        temp = numpy.array(tag_matrix['mst'])
+        current = current[4:]
+    elif current.startswith('MST'):
+        temp = numpy.array(tag_matrix['mst'])
+        current = current[3:]
+    elif current.startswith('EST'):
+        temp = numpy.array(tag_matrix['est'])
+        current = current[3:]
+    elif current.startswith('OBEYGJANLEGT'):
+        temp = numpy.array(tag_matrix['ób'])
+        current = current[12:]
+    return current, temp
 
 def vectorise_all(word_form_list, outfile):
     bin_dict = {}
@@ -101,6 +308,8 @@ def vectorise_all(word_form_list, outfile):
             temp = numpy.array(tag_matrix['ao'])
         if current_2 == 'fn':
             temp = numpy.array(tag_matrix['fn'])
+        if current_2 == 'rt': #add to tag_matrix?
+            temp = numpy.array(tag_matrix['lo'])
         if current_2 == 'pfn':
             temp = numpy.array(tag_matrix['fn']) + numpy.array(tag_matrix['pfn'])
         if current_2 == 'fs':
@@ -115,258 +324,17 @@ def vectorise_all(word_form_list, outfile):
             temp += numpy.array(tag_matrix['afn'])
 
         # In the latest version of DIM there may be more categories of proper nouns
-        if current_3 in ['göt','fyr','örn','föð','ism','móð','bær','hug','þor','lönd']:
+        if current_3 in ['heö','fyr','örn','föð','ism','móð','gæl','lönd','erl','göt','hetja','mvirk','bær','þor','hug','erm','dýr','ætt']:
             temp += numpy.array(tag_matrix['sérn'])
 
-        if current.startswith('OBEYGJANLEGT'):
-            temp += numpy.array(tag_matrix['ób'])
-            current = current[12:]
-        if current.startswith('OP'):
-            temp += numpy.array(tag_matrix['óp'])
-            current = current[2:]
-        if current.startswith('SP'):
-            temp += numpy.array(tag_matrix['spurnar'])
-            current = current[2:]
-        if current.startswith('NF'):
-            temp += numpy.array(tag_matrix['nf'])
-            current = current[2:]
-        if current.startswith('ÞGF'):
-            temp += numpy.array(tag_matrix['þgf'])
-            current = current[3:]
-        if current.startswith('ÞF'):
-            temp += numpy.array(tag_matrix['þf'])
-            current = current[2:]
-        if current.startswith('EF'):
-            temp += numpy.array(tag_matrix['ef'])
-            current = current[2:]
-        if current.startswith('ET'):
-            temp += numpy.array(tag_matrix['et'])
-            current = current[2:]
-        if current.startswith('FT'):
-            temp += numpy.array(tag_matrix['ft'])
-            current = current[2:]
-        if current.startswith('1P'):
-            temp += numpy.array(tag_matrix['1p'])
-            current = current[2:]
-        if current.startswith('2P'):
-            temp += numpy.array(tag_matrix['2p'])
-            current = current[2:]
-        if current.startswith('3P'):
-            temp += numpy.array(tag_matrix['3p'])
-            current = current[2:]
-        if current.startswith('gr'):
-            temp += numpy.array(tag_matrix['vsk_gr'])
-            current = current[2:]
-        if current.startswith('LHÞT'):
-            temp += numpy.array(tag_matrix['lhþ'])
-            current = current[4:]
-        if current.startswith('MST'):
-            temp += numpy.array(tag_matrix['mst'])
-            current = current[3:]
-        if current.startswith('-VB'):
-            temp += numpy.array(tag_matrix['vb'])
-            current = current[3:]
-        if current.startswith('-SB'):
-            temp += numpy.array(tag_matrix['sb'])
-            current = current[3:]
-        if current.startswith('-KK'):
-            temp += numpy.array(tag_matrix['kk'])
-            current = current[3:]
-        if current.startswith('-KVK'):
-            temp += numpy.array(tag_matrix['kvk'])
-            current = current[4:]
-        if current.startswith('-HK'):
-            temp += numpy.array(tag_matrix['hk'])
-            current = current[3:]
-        if current.startswith('-NF'):
-            temp += numpy.array(tag_matrix['nf'])
-            current = current[3:]
-        if current.startswith('-ÞF'):
-            temp += numpy.array(tag_matrix['þf'])
-            current = current[3:]
-        if current.startswith('-það'):
-            temp += numpy.array(tag_matrix['nf'])
-            current = current[4:]
-        if current.startswith('-ÞGF'):
-            temp += numpy.array(tag_matrix['þgf'])
-            current = current[4:]
-        if current.startswith('-EF'):
-            temp += numpy.array(tag_matrix['ef'])
-            current = current[3:]
-        if current.startswith('ET'):
-            temp += numpy.array(tag_matrix['et'])
-            current = current[2:]
-        if current.startswith('FT'):
-            temp += numpy.array(tag_matrix['ft'])
-            current = current[2:]
-        if current.startswith('LH'):
-            temp += numpy.array(tag_matrix['lhn'])
-            current = current[2:]
-        if current.startswith('NT'):
-            temp += numpy.array(tag_matrix['nt'])
-            current = current[2:]
-        if current.startswith('-NT'):
-            temp += numpy.array(tag_matrix['nt'])
-            current = current[3:]
-        if current.startswith('MM'):
-            temp += numpy.array(tag_matrix['mm'])
-            current = current[2:]
-        if current.startswith('-MM'):
-            temp += numpy.array(tag_matrix['mm'])
-            current = current[3:]
-        if current.startswith('GM'):
-            temp += numpy.array(tag_matrix['gm'])
-            current = current[2:]
-        if current.startswith('-GM'):
-            temp += numpy.array(tag_matrix['gm'])
-            current = current[3:]
-        if current.startswith('-NH'):
-            temp += numpy.array(tag_matrix['nh'])
-            current = current[3:]
-        if current.startswith('-FH'):
-            temp += numpy.array(tag_matrix['fh'])
-            current = current[3:]
-        if current.startswith('-VH'):
-            temp += numpy.array(tag_matrix['vh'])
-            current = current[3:]
-        if current.startswith('-BH'):
-            temp += numpy.array(tag_matrix['bh'])
-            current = current[3:]
-        if current.startswith('-SAGNB'):
-            temp += numpy.array(tag_matrix['sagnb'])
-            current = current[6:]
-        if current.startswith('-ST'):
-            temp += numpy.array(tag_matrix['stýfður'])
-            current = current[3:]
-        if current.startswith('-NT'):
-            temp += numpy.array(tag_matrix['nt'])
-            current = current[3:]
-        if current.startswith('-ÞT'):
-            temp += numpy.array(tag_matrix['þt'])
-            current = current[3:]
-        if current.startswith('-1P'):
-            temp += numpy.array(tag_matrix['1p'])
-            current = current[3:]
-        if current.startswith('-2P'):
-            temp += numpy.array(tag_matrix['2p'])
-            current = current[3:]
-        if current.startswith('-3P'):
-            temp += numpy.array(tag_matrix['3p'])
-            current = current[3:]
-        if current.startswith('-ET'):
-            temp += numpy.array(tag_matrix['et'])
-            current = current[3:]
-        if current.startswith('-FT'):
-            temp += numpy.array(tag_matrix['ft'])
-            current = current[3:]
-        if current.startswith('-FN-NF'):
-            current = current[6:]
-        if current.startswith('FSB'):
-            temp += numpy.array(tag_matrix['fst'])
-            temp += numpy.array(tag_matrix['sb'])
-            current = current[3:]
-        if current.startswith('FVB'):
-            temp += numpy.array(tag_matrix['fst'])
-            temp += numpy.array(tag_matrix['vb'])
-            current = current[3:]
-        if current.startswith('ESB'):
-            temp += numpy.array(tag_matrix['est'])
-            temp += numpy.array(tag_matrix['sb'])
-            current = current[3:]
-        if current.startswith('EVB'):
-            temp += numpy.array(tag_matrix['est'])
-            temp += numpy.array(tag_matrix['vb'])
-            current = current[3:]
-        if current.startswith('MSTSB'):
-            temp += numpy.array(tag_matrix['mst'])
-            temp += numpy.array(tag_matrix['sb'])
-            current = current[5:]
-        if current.startswith('MST'):
-            temp += numpy.array(tag_matrix['mst'])
-            current = current[3:]
-        if current.startswith('KK'):
-            temp += numpy.array(tag_matrix['kk'])
-            current = current[2:]
-        if current.startswith('KVK'):
-            temp += numpy.array(tag_matrix['kvk'])
-            current = current[3:]
-        if current.startswith('HK'):
-            temp += numpy.array(tag_matrix['hk'])
-            current = current[2:]
-        if current.startswith('-KK'):
-            temp += numpy.array(tag_matrix['kk'])
-            current = current[3:]
-        if current.startswith('-KVK'):
-            temp += numpy.array(tag_matrix['kvk'])
-            current = current[4:]
-        if current.startswith('-HK'):
-            temp += numpy.array(tag_matrix['hk'])
-            current = current[3:]
-        if current.startswith('-NF'):
-            temp += numpy.array(tag_matrix['nf'])
-            current = current[3:]
-        if current.startswith('-ÞF'):
-            temp += numpy.array(tag_matrix['þf'])
-            current = current[3:]
-        if current.startswith('-ÞGF'):
-            temp += numpy.array(tag_matrix['þgf'])
-            current = current[4:]
-        if current.startswith('-EF'):
-            temp += numpy.array(tag_matrix['ef'])
-            current = current[3:]
-        if current.startswith('ET'):
-            temp += numpy.array(tag_matrix['et'])
-            current = current[2:]
-        if current.startswith('FT'):
-            temp += numpy.array(tag_matrix['ft'])
-            current = current[2:]
-        if current.startswith('ao_'):
-            current = current[3:]
-        if current.startswith('FST'):
-            temp += numpy.array(tag_matrix['ekki_fallst'])
-            current = current[3:]
-        if current.startswith('MST'):
-            temp += numpy.array(tag_matrix['ekki_fallst'])
-            temp += numpy.array(tag_matrix['mst'])
-            current = current[3:]
-        if current.startswith('EST'):
-            temp += numpy.array(tag_matrix['ekki_fallst'])
-            temp += numpy.array(tag_matrix['est'])
-            current = current[3:]
-        if current.startswith('fn_'):
-            current = current[3:]
-        if current.startswith('KK'):
-            temp += numpy.array(tag_matrix['kk'])
-            current = current[2:]
-        if current.startswith('HK'):
-            temp += numpy.array(tag_matrix['hk'])
-            current = current[2:]
-        if current.startswith('KVK'):
-            temp += numpy.array(tag_matrix['kvk'])
-            current = current[3:]
-        if current.startswith('_NF'):
-            temp += numpy.array(tag_matrix['nf'])
-            current = current[3:]
-        if current.startswith('_ÞF'):
-            temp += numpy.array(tag_matrix['þf'])
-            current = current[3:]
-        if current.startswith('_ÞGF'):
-            temp += numpy.array(tag_matrix['þgf'])
-            current = current[4:]
-        if current.startswith('_EF'):
-            temp += numpy.array(tag_matrix['ef'])
-            current = current[3:]
-        if current.startswith('ET'):
-            temp += numpy.array(tag_matrix['et'])
-            current = current[2:]
-        if current.startswith('FT'):
-            temp += numpy.array(tag_matrix['ft'])
-            current = current[2:]
-        if current.startswith('-SERST'):
-            temp += numpy.array(tag_matrix['sérst'])
-            current = current[6:]
-        if len(current) > 0:
-            print(i, current)
+        while len(current) > 0:
+            current_out, mark = build_tagarray(current)
+            if current_out == current:
+                print(i, current)
+                current = ''
+            else:
+                temp += numpy.array(mark)
+                current = current_out
 
         #using a dict for it all - merging all possibilities for a wordform into one vector
         if current_wordform in bin_dict:

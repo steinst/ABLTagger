@@ -161,7 +161,7 @@ class CombinedDims:
         self.word_lookup = 128
         self.char_lookup = 20
         self.morphlex_lookup = 65
-        self.word_class_lookup = 10
+        self.word_class_lookup = 14
 
 
 class ABLTagger():
