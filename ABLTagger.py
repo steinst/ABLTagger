@@ -211,7 +211,7 @@ class ABLTagger():
             self.MORPHLEX_LOOKUP = self.model.add_lookup_parameters((len(self.morphlex_embeddings), self.dim.morphlex_lookup))
             self.MORPHLEX_LOOKUP.init_from_array(self.morphlex_embeddings)
         if self.coarse_flag:
-            self.WORD_CLASS_LOOKUP = self.model.add_lookup_parameters((11, self.dim.word_class_lookup))
+            self.WORD_CLASS_LOOKUP = self.model.add_lookup_parameters((self.dim.word_class_lookup + 1, self.dim.word_class_lookup))
             self.WORD_CLASS_LOOKUP.init_from_array(self.coarse_embeddings)
 
         # MLP on top of biLSTM outputs, word/char out -> hidden -> num tags
@@ -299,7 +299,8 @@ class ABLTagger():
         cb_init = self.cBwdRNN.initial_state()
 
         # Get the word vectors, a 128-dim vector expression for each word.
-        if self.coarse_flag:
+        #if self.coarse_flag:
+        if tags is not None:
             wembs = [self.word_and_char_rep(w, cf_init, cb_init, t[0]) for w, t in zip(words, tags)]
         else:
             wembs = [self.word_and_char_rep(w, cf_init, cb_init) for w in words]

@@ -57,6 +57,7 @@ def update_progress_notice(i, epoch, start_time, epoch_start_time, avg_loss, tot
 
 
 def evaluate_tagging(tagger, test_data, morphlex_flag=False, coarse_flag=False):
+    eval_out = ''
     if morphlex_flag:
         good = total = good_sent = total_sent = unk_good = morphlex_good = morphlex_total = train_good = train_total = both_good = both_total = unk_total = 0.0
     else:
@@ -71,6 +72,8 @@ def evaluate_tagging(tagger, test_data, morphlex_flag=False, coarse_flag=False):
         if tags == golds: good_sent += 1
         total_sent += 1
         for go, gu, w in zip(golds, tags, words):
+            eval_out += w + '\t' + go + '\t' + gu + '\n'
+            total += 1
             if morphlex_flag:
                 if go == gu:
                     good += 1
@@ -80,7 +83,6 @@ def evaluate_tagging(tagger, test_data, morphlex_flag=False, coarse_flag=False):
                     else:
                         if tagger.word_frequency[w] == 0: unk_good += 1
                         else: train_good += 1
-                total += 1
                 if w in tagger.morphlex.keys():
                     if tagger.word_frequency[w] == 0: morphlex_total += 1
                     else: both_total += 1
@@ -92,9 +94,13 @@ def evaluate_tagging(tagger, test_data, morphlex_flag=False, coarse_flag=False):
                     good += 1
                     if tagger.word_frequency[w] == 0:
                         unk_good += 1
-                total += 1
                 if tagger.word_frequency[w] == 0:
                     unk_total += 1
+
+    filename = args.data_folder + format(args.dataset_fold, '02') + 'PM.txt__tagger_out'
+    f = open(filename, "w")
+    f.write(eval_out)
+    f.close()
 
     if morphlex_flag:
         eval_text = str(total) + "|" + str(train_total) + "|" + str(morphlex_total) + "|" + str(both_total) + "|" + str(unk_total)
@@ -102,11 +108,11 @@ def evaluate_tagging(tagger, test_data, morphlex_flag=False, coarse_flag=False):
     return good/total, good_sent/total_sent, (good-unk_good)/(total-unk_total), unk_good/unk_total
 
 
-def write_results_to_file(epoch, evaluation, loss, learning_rate, morphlex_flag, total_epochs):
+def write_results_to_file(epoch, evaluation, loss, learning_rate, morphlex_flag, total_epochs, num_words):
     if not os.path.exists('./evaluate/'):
         os.makedirs('./evaluate')
 
-    file_name = str(format(args.dataset_fold, '02')) + '_' + args.training_type + '_' + args.optimization + '_' + str(args.learning_rate)
+    file_name = args.corpus + '_' + str(format(args.dataset_fold, '02')) + '_' + args.training_type + '_' + args.optimization + '_' + str(args.learning_rate)
 
     if morphlex_flag:
         word_acc, sent_acc, train_acc, morphlex_acc, both_acc, known_acc, unknown_acc, word_counts = evaluation
@@ -133,7 +139,21 @@ def write_results_to_file(epoch, evaluation, loss, learning_rate, morphlex_flag,
                                  args.training_type,
                                  ("X" if epoch == total_epochs else ""),
                                  str(args.learning_rate_decay),
-                                 str(morphlex_flag), args.coarse_type])
+                                 str(morphlex_flag), args.coarse_type, str(num_words)])
+
+def tag_testset(test_data, tagger, coarse_flag = False):
+    filename = args.data_folder + format(args.dataset_fold, '02') + 'PM.txt__tagger_output'
+    with open(filename, "w") as f:
+        for sent in test_data:
+            print(sent)
+            if coarse_flag:
+                words, golds, coarse_tags = map(list, zip(*sent))
+                f.write("\n".join([x[0] + "\t" + x[1] for x in tagger.tag_sent(words, coarse_tags)]) + '\n')
+                f.write("\n")
+            else:
+                words, golds = map(list, zip(*sent))
+                f.write("\n".join([x[0] + "\t" + x[1] for x in tagger.tag_sent(words)]) + '\n')
+                f.write("\n")
 
 
 def tag_coarse(input, tagger):
@@ -222,11 +242,15 @@ def train_and_evaluate_tagger(tagger, training_data, test_data, total_epochs, ev
             if morphlex is not None:
                 evaluation = evaluate_tagging(tagger, test_data, True, coarse_flag)
                 update_progress_notice(i, ITER + 1, start_time, epoch_start_time, cum_loss / num_tagged, total_epochs, evaluation, True)
-                write_results_to_file(ITER + 1, evaluation, cum_loss / num_tagged, tagger.trainer.learning_rate, True, total_epochs)
+                # prófa að setja fjölda orða inn líka
+                print(len(test_data))
+                write_results_to_file(ITER + 1, evaluation, cum_loss / num_tagged, tagger.trainer.learning_rate, True, total_epochs, len(test_data))
             else:
                 evaluation = evaluate_tagging(tagger, test_data, False, coarse_flag)
                 update_progress_notice(i, ITER + 1, start_time, epoch_start_time, cum_loss / num_tagged, total_epochs, evaluation)
-                write_results_to_file(ITER + 1, evaluation, cum_loss / num_tagged, tagger.trainer.learning_rate, False, total_epochs)
+                # prófa að setja fjölda orða inn líka
+                print(len(test_data))
+                write_results_to_file(ITER + 1, evaluation, cum_loss / num_tagged, tagger.trainer.learning_rate, False, total_epochs, len(test_data))
 
         # decay
         if args.learning_rate_decay:
@@ -234,6 +258,8 @@ def train_and_evaluate_tagger(tagger, training_data, test_data, total_epochs, ev
 
     # Show hyperparameters used when we are done
     print("\nHP opt={} epochs={} emb_noise={} ".format(args.optimization, total_epochs, args.noise))
+    #if evaluate:
+    #    tag_testset(test_data, tagger, coarse_flag)
 
 
 if __name__ == '__main__':
@@ -247,13 +273,15 @@ if __name__ == '__main__':
     parser.add_argument('--learning_rate_min', '-l_min', help="Learning rate min for Cyclical SGD", type=float, default=0.01)
     parser.add_argument('--dropout', '-d', help="Dropout rate", type=float, default=0.0)
     # EXTERNAL DATA
+    parser.add_argument('--data_folder', '-data', help="Folder containing training data", default='./data/')
     parser.add_argument('--use_morphlex', '-morphlex', help="File with morphological lexicon embeddings in ./extra folder")
     parser.add_argument('--load_characters', '-load_chars', help="File to load characters from", default='./extra/characters_training.txt')
     parser.add_argument('--load_coarse_tagset', '-load_coarse', help="Load embeddings file for coarse grained tagset", default='./extra/word_class_vectors.txt')
     parser.add_argument('--coarse_type', '-coarse', help="Select type of coarse data", choices=['word_class'], default='word_class')
     parser.add_argument('--training_type','-type', help='Select training type: coarse, fine or combined.', choices=['coarse', 'fine', 'combined'], default="combined")
     # TRAIN AND EVALUATE
-    parser.add_argument('--dataset_fold', '-fold', help="select which dataset to use (1-10)", type=int, default=2)
+    parser.add_argument('--corpus', '-c', help="Name of training corpus", default='otb')
+    parser.add_argument('--dataset_fold', '-fold', help="select which dataset to use (1-10)", type=int, default=1)
     parser.add_argument('--epochs_coarse_grained', '-ecg', help="How many epochs for coarse grained training? (12 is default)", type=int, default=12)
     parser.add_argument('--epochs_fine_grained', '-efg', help="How many epochs for fine grained training? (20 is default)", type=int, default=20)
     parser.add_argument('--noise', '-n', help="Noise in embeddings", type=float, default=0.1)
@@ -291,39 +319,39 @@ if __name__ == '__main__':
 
     if args.training_type == 'fine':
         total_epochs = args.epochs_fine_grained
-        train_file = './data/' + format(args.dataset_fold, '02') + training_file_ending_fine
-        test_file = './data/' + format(args.dataset_fold, '02') + test_file_ending_fine
+        train_file = args.data_folder + format(args.dataset_fold, '02') + training_file_ending_fine
+        test_file = args.data_folder + format(args.dataset_fold, '02') + test_file_ending_fine
         train = list(Utils.read(train_file))
         test = list(Utils.read(test_file))
 
         words, word_frequency, tags_fine = Utils.create_vocabularies(train_file)
-        with open('./data/WORDS_' + format(args.dataset_fold, '02') + training_file_ending_fine, "w") as word_freq_file:
+        with open(args.data_folder + 'WORDS_' + format(args.dataset_fold, '02') + training_file_ending_fine, "w") as word_freq_file:
             for i in words:
                 word_freq_file.write(i.strip() + '\t' + str(word_frequency[i]) + '\n')
-        with open('./data/TAGS_FINE_' + format(args.dataset_fold, '02') + training_file_ending_fine, "w") as tag_file_fine:
+        with open(args.data_folder + 'TAGS_FINE_' + format(args.dataset_fold, '02') + training_file_ending_fine, "w") as tag_file_fine:
             for i in tags_fine:
                 tag_file_fine.write(i.strip() + '\t')
-        VocabWords, WordFrequency = Utils.build_word_dict(list(Utils.read('./data/WORDS_' + format(args.dataset_fold, '02') + training_file_ending_fine)))
-        VocabTagsFine = Utils.build_vocab_tags('./data/TAGS_FINE_' + format(args.dataset_fold, '02') + training_file_ending_fine)
+        VocabWords, WordFrequency = Utils.build_word_dict(list(Utils.read(args.data_folder + 'WORDS_' + format(args.dataset_fold, '02') + training_file_ending_fine)))
+        VocabTagsFine = Utils.build_vocab_tags(args.data_folder + 'TAGS_FINE_' + format(args.dataset_fold, '02') + training_file_ending_fine)
         tagger = ABLTagger(VocabCharacters, VocabWords, VocabTagsFine, WordFrequency, morphlex_embeddings, None, args)
         train_and_evaluate_tagger(tagger, train, test, args.epochs_fine_grained, True, args.use_morphlex)
 
     elif args.training_type == 'coarse':
         total_epochs = args.epochs_coarse_grained
-        train_file = './data/' + format(args.dataset_fold, '02') + training_file_ending_coarse
-        test_file = './data/' + format(args.dataset_fold, '02') + test_file_ending_coarse
+        train_file = args.data_folder + format(args.dataset_fold, '02') + training_file_ending_coarse
+        test_file = args.data_folder + format(args.dataset_fold, '02') + test_file_ending_coarse
         train = list(Utils.read(train_file))
         test = list(Utils.read(test_file))
 
         words, word_frequency, tags_coarse = Utils.create_vocabularies(train_file)
-        with open('./data/WORDS_' + format(args.dataset_fold, '02') + training_file_ending_coarse, "w") as word_freq_file:
+        with open(args.data_folder + 'WORDS_' + format(args.dataset_fold, '02') + training_file_ending_coarse, "w") as word_freq_file:
             for i in words:
                 word_freq_file.write(i.strip() + '\t' + str(word_frequency[i]) + '\n')
-        with open('./data/TAGS_COARSE_' + args.coarse_type + '_' + format(args.dataset_fold, '02') + training_file_ending_coarse, "w") as tag_file_coarse:
+        with open(args.data_folder + 'TAGS_COARSE_' + args.coarse_type + '_' + format(args.dataset_fold, '02') + training_file_ending_coarse, "w") as tag_file_coarse:
             for i in tags_coarse:
                 tag_file_coarse.write(i.strip() + '\t')
-        VocabWords, WordFrequency = Utils.build_word_dict(list(Utils.read('./data/WORDS_' + format(args.dataset_fold, '02') + training_file_ending_coarse)))
-        VocabTagsCoarse = Utils.build_vocab_tags('./data/TAGS_COARSE_' + args.coarse_type + '_' + format(args.dataset_fold, '02') + training_file_ending_coarse)
+        VocabWords, WordFrequency = Utils.build_word_dict(list(Utils.read(args.data_folder + 'WORDS_' + format(args.dataset_fold, '02') + training_file_ending_coarse)))
+        VocabTagsCoarse = Utils.build_vocab_tags(args.data_folder + 'TAGS_COARSE_' + args.coarse_type + '_' + format(args.dataset_fold, '02') + training_file_ending_coarse)
         tagger = ABLTagger(VocabCharacters, VocabWords, VocabTagsCoarse, WordFrequency, morphlex_embeddings, None, args)
         train_and_evaluate_tagger(tagger, train, test, args.epochs_coarse_grained, True, args.use_morphlex)
 
@@ -333,30 +361,30 @@ if __name__ == '__main__':
         total_epochs_coarse = args.epochs_coarse_grained
         total_epochs_fine = args.epochs_fine_grained
 
-        train_file_coarse = './data/' + format(args.dataset_fold, '02') + training_file_ending_coarse
-        test_file_coarse = './data/' + format(args.dataset_fold, '02') + test_file_ending_coarse
+        train_file_coarse = args.data_folder + format(args.dataset_fold, '02') + training_file_ending_coarse
+        test_file_coarse = args.data_folder + format(args.dataset_fold, '02') + test_file_ending_coarse
         train_coarse = list(Utils.read(train_file_coarse))
         test_coarse = list(Utils.read(test_file_coarse))
 
-        train_file_fine = './data/' + format(args.dataset_fold, '02') + training_file_ending_fine
-        test_file_fine = './data/' + format(args.dataset_fold, '02') + test_file_ending_fine
+        train_file_fine = args.data_folder + format(args.dataset_fold, '02') + training_file_ending_fine
+        test_file_fine = args.data_folder + format(args.dataset_fold, '02') + test_file_ending_fine
         train_fine = list(Utils.read(train_file_fine))
 
         words, word_frequency, tags_coarse = Utils.create_vocabularies(train_file_coarse)
         words, word_frequency, tags_fine = Utils.create_vocabularies(train_file_fine)
-        with open('./data/WORDS_' + format(args.dataset_fold, '02') + training_file_ending_coarse, "w") as word_freq_file:
+        with open(args.data_folder + 'WORDS_' + format(args.dataset_fold, '02') + training_file_ending_coarse, "w") as word_freq_file:
             for i in words:
                 word_freq_file.write(i.strip() + '\t' + str(word_frequency[i]) + '\n')
-        with open('./data/TAGS_COARSE_' + args.coarse_type + '_' + format(args.dataset_fold, '02') + training_file_ending_coarse, "w") as tag_file_coarse:
+        with open(args.data_folder + 'TAGS_COARSE_' + args.coarse_type + '_' + format(args.dataset_fold, '02') + training_file_ending_coarse, "w") as tag_file_coarse:
             for i in tags_coarse:
                 tag_file_coarse.write(i.strip() + '\t')
-        with open('./data/TAGS_FINE_' + format(args.dataset_fold, '02') + training_file_ending_fine, "w") as tag_file_fine:
+        with open(args.data_folder + 'TAGS_FINE_' + format(args.dataset_fold, '02') + training_file_ending_fine, "w") as tag_file_fine:
             for i in tags_fine:
                 tag_file_fine.write(i.strip() + '\t')
 
-        VocabWords, WordFrequency = Utils.build_word_dict(list(Utils.read('./data/WORDS_' + format(args.dataset_fold, '02') + training_file_ending_coarse)))
-        VocabTagsCoarse = Utils.build_vocab_tags('./data/TAGS_COARSE_' + args.coarse_type + '_' + format(args.dataset_fold, '02') + training_file_ending_coarse)
-        VocabTagsFine = Utils.build_vocab_tags('./data/TAGS_FINE_' + format(args.dataset_fold, '02') + training_file_ending_fine)
+        VocabWords, WordFrequency = Utils.build_word_dict(list(Utils.read(args.data_folder + 'WORDS_' + format(args.dataset_fold, '02') + training_file_ending_coarse)))
+        VocabTagsCoarse = Utils.build_vocab_tags(args.data_folder + 'TAGS_COARSE_' + args.coarse_type + '_' + format(args.dataset_fold, '02') + training_file_ending_coarse)
+        VocabTagsFine = Utils.build_vocab_tags(args.data_folder + 'TAGS_FINE_' + format(args.dataset_fold, '02') + training_file_ending_fine)
         tagger_coarse = ABLTagger(VocabCharacters, VocabWords, VocabTagsCoarse, WordFrequency, morphlex_embeddings, None, args)
         print("Training pre-tagger... this will take hours!")
         train_and_evaluate_tagger(tagger_coarse, train_coarse, test_coarse, args.epochs_coarse_grained, False, args.use_morphlex)

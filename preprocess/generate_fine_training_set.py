@@ -25,5 +25,7 @@ if __name__ == '__main__':
             while line:
                 f.write(finify(line))
                 line = training.readline()
+            f.write('')
+            f.write('')
 
 #TODO: add spinner and something to indicate time left
