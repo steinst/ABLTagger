@@ -1,6 +1,6 @@
 # ABLTagger
 ABLTagger is a bidirectonal LSTM Part-of-Speech Tagger with combined Word and Character embeddings, augmented with a morphological lexicon and a lexical category identification step. The work is described in the paper [Augmenting a BiLSTM Tagger with a Morphological Lexicon and a Lexical Category Identification Step](https://www.aclweb.org/anthology/R19-1133/)
-
+NOTE: This code has been updated to work with a revised fine-grained tagging schema for Icelandic.
 If you find this work useful in your research, please cite the paper: 
 
 @inproceedings{steingrimsson-etal-2019-augmenting,
