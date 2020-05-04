@@ -11,8 +11,8 @@ def coarsify(inputline):
 if __name__ == '__main__':
     # reading input parameters
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--input', '-i', help='Name of input file.', default="Full.fine.txt")
-    parser.add_argument('--output', '-o', help='Name of output file.', default="Full.coarse.txt")
+    parser.add_argument('--input', '-i', help='Name of input file.', default="./data/Full.fine.txt")
+    parser.add_argument('--output', '-o', help='Name of output file.', default="./data/Full.coarse.txt")
 
     try:
         args = parser.parse_args()

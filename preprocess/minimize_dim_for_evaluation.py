@@ -1,14 +1,14 @@
-import numpy
+import argparse
 
-data_folder = '../data/'
+data_folder = '../data/mim_gull/'
 dim_folder = '../extra/'
-training_files = ['01PM.txt','01TM.txt']
-training_set = 'otb'
-dim_in = 'dmii.or'
-dim_out = 'dmii.or.' + training_set
+train_test_files = ['01PM.plain','01TM.plain']
+training_set = 'mim_gull'
+dim_in = 'dmii.vectors'
+dim_out = 'dmii.vectors.' + training_set
 
 training_dict = {}
-for i in training_files:
+for i in train_test_files:
     curr_file = open(data_folder + i, 'r')
     training_lines = curr_file.readlines()
     for j in training_lines:
@@ -30,3 +30,4 @@ with open(dim_folder + dim_out, "w") as f:
                 f.write(dim_wordform)
         except:
             pass
+

@@ -11,8 +11,8 @@ def finify(inputline):
 if __name__ == '__main__':
     # reading input parameters
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--input', '-i', help='Name of input file.', default="Full.txt")
-    parser.add_argument('--output', '-o', help='Name of output file.', default="Full.fine.txt")
+    parser.add_argument('--input', '-i', help='Name of input file.', default="./data/Full.txt")
+    parser.add_argument('--output', '-o', help='Name of output file.', default="./data/Full.fine.txt")
 
     try:
         args = parser.parse_args()
@@ -27,5 +27,3 @@ if __name__ == '__main__':
                 line = training.readline()
             f.write('')
             f.write('')
-
-#TODO: add spinner and something to indicate time left

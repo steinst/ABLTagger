@@ -357,8 +357,8 @@ def vectorise_all(word_form_list, outfile):
 if __name__ == '__main__':
     # reading input parameters
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--input', '-i', help='Name of input file.', default="SHsnid.csv")
-    parser.add_argument('--output', '-o', help='Name of output file.', default="dmii.vectors")
+    parser.add_argument('--input', '-i', help='Name of input file.', default="./data/SHsnid.csv")
+    parser.add_argument('--output', '-o', help='Name of output file.', default="./extra/dmii.vectors")
 
     try:
         args = parser.parse_args()
@@ -368,5 +368,3 @@ if __name__ == '__main__':
     dim_file = open(args.input, 'r')
     wordforms = dim_file.readlines()
     vectorise_all(wordforms, args.output)
-
-#TODO: add spinner
