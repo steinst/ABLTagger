@@ -109,13 +109,12 @@ The program runs on a CPU and training with default settings and the two Iceland
 ## Tagging texts
 Texts can be tagged using the script `train.py`. The program loads a model stored in the `./models` folder. It can be a model trained by the user or a pre-trained model. A model trained on the IFD and MIM-GOLD combined can be downloaded:
 
-* Full (Best model to use for tagging)
+* Full
     - A model trained on all training data used in the paper cited above, taking advantage of the whole DMII morphological lexicon. This model needs at least 16GB RAM to load.
-    - Download link: https://www.dropbox.com/s/8oya0nse3o4xxoy/models_Full.zip?dl=0 (360 MB download - 6.7 GB uncompressed)
+    - Download link: https://www.dropbox.com/s/59thds6lun2zki5/Full.tar.gz?dl=0 (374 MB download - 7.0 GB uncompressed)
     - The model should go into a folder called ./models/Full
 
-The model needs the contents of https://www.dropbox.com/s/ysmn9or0n0zytwi/extra.zip?dl=0 to be in the ./extra folder.
-
+The model needs the contents of https://www.dropbox.com/s/97s4zk4d9zk722x/extra.tar.gz?dl=0 to be in the ./extra folder.
 
 Running `./tag.py -h` gives information on all possible parameters. At minimum the input file(s) have to be specified, and normally the model is also specified. 
 ```
