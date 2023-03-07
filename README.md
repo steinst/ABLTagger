@@ -3,6 +3,7 @@ ABLTagger is a bidirectonal LSTM Part-of-Speech Tagger with combined Word and Ch
 NOTE: This code has been updated to work with a revised fine-grained tagging schema for Icelandic.
 If you find this work useful in your research, please cite the paper: 
 
+```
 @inproceedings{steingrimsson-etal-2019-augmenting,
     title = "Augmenting a {B}i{LSTM} Tagger with a Morphological Lexicon and a Lexical Category Identification Step",
     author = {Steingr{\'\i}msson, Stein{\th}{\'o}r  and
@@ -16,6 +17,7 @@ If you find this work useful in your research, please cite the paper:
     doi = "10.26615/978-954-452-056-4_133",
     pages = "1161--1168",
 }
+```
 
 The paper describes a method for achieving high accuracy in part-of-speech tagging a fine grained tagset. We show how the method is used to reach the highest accuracy reported for PoS-tagging Icelandic. The tagger is augmented by using a morphological lexicon, [The Database of Icelandic Morphology (DIM)](https://www.aclweb.org/anthology/W19-6116/), and by running a pre-tagging step using a very coarse grained tagset induced from the fine grained data.   
 
